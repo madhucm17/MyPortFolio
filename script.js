@@ -65,6 +65,29 @@
     yearSpan.textContent = String(new Date().getFullYear());
   }
 
+  // Scroll reveal animations
+  const revealElements = Array.from(document.querySelectorAll(
+    ".section, .skill-card, .project-card, .timeline li, .contact-form, .hero-content, .hero-art"
+  ));
+  revealElements.forEach(el => el.classList.add("reveal"));
+
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReduced && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.15 });
+
+    revealElements.forEach(el => observer.observe(el));
+  } else {
+    // Fallback: show immediately
+    revealElements.forEach(el => el.classList.add("is-visible"));
+  }
+
   // Contact form: basic success UX for Formspree
   const form = document.getElementById("contact-form");
   if (form) {
